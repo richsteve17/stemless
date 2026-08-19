@@ -19,13 +19,32 @@
     var songs = LS.get("stemless.songs", null);
     if (!Array.isArray(songs)) songs = [];
 
-    /* One-time, non-destructive migration: add the five requested EP boards.
-       Existing custom songs and progress are never replaced. */
-    if (!LS.get("stemless.ep.recipes.v1", false) && D.epSongs) {
+    var updated = false;
+
+    if (D.epSongs) {
       D.epSongs.forEach(function (seed) {
-        var exists = songs.some(function (s) { return s.recipeId === seed.recipeId; });
-        if (!exists) songs.push(JSON.parse(JSON.stringify(seed)));
+        var existing = songs.find(function (s) { return s.recipeId === seed.recipeId; });
+        if (!existing) {
+          songs.push(JSON.parse(JSON.stringify(seed)));
+          updated = true;
+        } else {
+          // Sync canonical recipe fields with D.epRecipes
+          var r = D.epRecipes ? D.epRecipes.find(function (rec) { return rec.id === seed.recipeId; }) : null;
+          if (r) {
+            if (existing.title !== r.title || existing.artist !== r.artist || existing.key !== r.key || existing.bpm !== r.bpm || existing.feel !== r.feel) {
+              existing.title = r.title;
+              existing.artist = r.artist;
+              existing.key = r.key;
+              existing.bpm = r.bpm;
+              existing.feel = r.feel;
+              updated = true;
+            }
+          }
+        }
       });
+    }
+
+    if (updated || !LS.get("stemless.ep.recipes.v1", false)) {
       saveSongs(songs);
       LS.set("stemless.ep.recipes.v1", true);
     }
