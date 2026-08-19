@@ -3,9 +3,9 @@ window.STUDIO = (function () {
 
   /* ============ PHASES ============ */
   var phases = [
-    { id: "prep",    name: "Prep",    tag: "Know the song cold & decide the plan" },
-    { id: "map",     name: "Map",     tag: "Section map, key, tempo, feel" },
-    { id: "build",   name: "Build",   tag: "Drums → bass → keys/pads → guitars" },
+    { id: "prep",    name: "Start",   tag: "Producer mindset — no instrument skills required" },
+    { id: "map",     name: "Lay Out", tag: "Copy the supplied section and chord blocks" },
+    { id: "build",   name: "Build",   tag: "Drums → bass roots → virtual guitar blocks" },
     { id: "arrange", name: "Arrange", tag: "Dynamics, fills, transitions, space" },
     { id: "mix",     name: "Mix",     tag: "Leave a hole for you, mono-safe" },
     { id: "ship",    name: "Ship",    tag: "Export, stems, road rig, redundancy" }
@@ -15,13 +15,30 @@ window.STUDIO = (function () {
   var lessons = [
     /* -------- PREP -------- */
     {
+      id: "producer-not-player", phase: "prep", tool: "both", minutes: 6,
+      title: "Start here: you are the producer, not the guitar player",
+      intro: "You do not need to know an instrument or read music. You already understand pulse, phrasing, drops, and crowd energy from singing, rapping, DJing, and finger drumming. In this app you will place labeled blocks on a grid, listen, and move them until your vocal feels right.",
+      steps: [
+        { t: "A bar is four counts", d: "Count 1-2-3-4 with the click. One rectangle from one bar line to the next lasts those four counts. That is enough theory to start." },
+        { t: "A chord block is several notes stacked", d: "You never have to work out the notes. Each EP recipe gives the exact stack, such as C3 + G3 + C4. Draw those notes directly above each other so they start and stop together." },
+        { t: "A bass root is one low note", d: "If the chord says C, draw a low C. If it says F, draw a low F. The recipe gives the octave and the order." },
+        { t: "Your ears make the final call", d: "Loop four or eight bars, sing over them, and move a chord boundary if it lands before or after your phrase. That is producing — not failing a music test." },
+        { t: "Build in tiny loops", d: "Never attack a whole song. Make one verse and one chorus work, then duplicate them and change the few sections that differ." }
+      ],
+      tips: [
+        "Use your finger-drumming instinct for groove, then quantize the performance so the DAW cleans up timing.",
+        "Your first pass only needs drums, bass roots, and virtual-guitar power blocks. Skip keys and detail until you can sing the song over it."
+      ],
+      watchout: "Do not stop to learn piano or guitar first. The piano roll is a visual sequencer; drawing the supplied blocks is the job."
+    },
+    {
       id: "why-diy", phase: "prep", tool: "both", minutes: 4,
       title: "Why DIY backing tracks actually saves you money",
       intro: "You already know the split: a cover needs a mechanical license for the composition, and using a recording (stems, karaoke, the original master) needs a master-use license on top. When you perform and program every part yourself, there is no master to clear — you own the new recording, and the mechanical you already hold is the only clearance. That's the whole game.",
       steps: [
         { t: "Confirm the clearance per song", d: "Mechanical = approved (you've got this). Master = yours, because you performed and programmed every part. No third party to clear." },
         { t: "Watch your sources", d: "BandLab and GarageBand's built-in loops are licensed for use in new recordings — fine to use, keep the pack documented. A commercial stem pack or any sample of the original recording is a master-use situation again — avoid it." },
-        { t: "Define the deliverable", d: "A full-band live-feel backing track: drums, bass, keys/pads, and only the guitar you're NOT playing live. Your voice and main instrument stay out." }
+        { t: "Define the deliverable", d: "A full-band punk backing track: drums, bass, virtual guitars, and only the extra texture a song truly needs. Your lead vocal stays out so you can perform it live." }
       ],
       tips: [
         "Samples of the original recording are the fastest way to accidentally owe a master license — don't reach for them.",
@@ -31,47 +48,47 @@ window.STUDIO = (function () {
     },
     {
       id: "decision-sheet", phase: "prep", tool: "both", minutes: 5,
-      title: "Know the song cold — your decision sheet",
-      intro: "Speed comes from deciding before you record. For each cover, make a one-page decision sheet so the session is execution, not exploration.",
+      title: "Choose the target before you touch the DAW",
+      intro: "The five EP boards already contain starter keys, tempos, chords, and punk section maps. Your job here is to confirm the vocal range and choose what you are borrowing as inspiration — never to reverse-engineer the whole song alone.",
       steps: [
-        { t: "Pick ONE reference", d: "One definitive recording as the arrangement reference. Note any live-version changes you prefer." },
-        { t: "Decide tempo & key", d: "Original vs. yours. If you're changing key for your range, decide now — chart in numbers so a key move later is one click." },
-        { t: "Declare the holes", d: "Which parts YOU play live vs. what's tracked. Typical: you play guitar and sing live; everything else is tracked." },
-        { t: "List the signature moments", d: "Intro riff, stop hits, instrumental breaks, the one fill the audience waits for. These are non-negotiable in the arrangement." }
+        { t: "Pick ONE exact reference file", d: "Use the specific version named on the EP board. Put a legal streaming link in your notes; do not import that recording into the released master." },
+        { t: "Do a vocal range test", d: "Play the recipe's chord buttons and sing the highest chorus. Comfortable means keep the supplied key. Strained means use the Transpose tool before building." },
+        { t: "Your live hole is simple", d: "You sing and/or rap live. Do not put a lead vocal, vocal melody, or constant center-pad in the show backing track." },
+        { t: "Choose the signature moments", d: "Keep the moments you named: Me First energy on Sloop, the Sid Vicious lounge-to-punk turn, Blister's drop, and the Black Flag-style breakdown in American Girl." }
       ],
       tips: [
-        "Chart it in Nashville numbers so a key change is one move later.",
-        "Write the decision sheet, not the demo. Don't program anything until it exists."
+        "A phone voice memo over a four-bar chord loop is enough to approve the key.",
+        "The supplied charts are starter arrangements. Moving a boundary to fit your phrasing is the correct move."
       ],
-      watchout: "Don't start programming before the section map exists — re-arranging after drums are in is painful."
+      watchout: "Do not build all five at once. Finish the Sloop John B eight-bar test loop before opening the next song."
     },
 
     /* -------- MAP -------- */
     {
       id: "section-map", phase: "map", tool: "both", minutes: 6,
-      title: "Section mapping: chart the song bar-by-bar",
-      intro: "Chart the song into sections with bar counts. This is your blueprint, your arrangement skeleton, and your markers in the DAW.",
+      title: "Copy the supplied section map into the timeline",
+      intro: "A section is just a named span of bars: Intro, Verse, Chorus, Breakdown, Outro. Each EP recipe gives you a starter map. You will create empty colored regions first, before drawing any notes.",
       steps: [
-        { t: "Label every section", d: "Intro, verse, pre-chorus, chorus, bridge, solo, breakdown, outro — each with a bar count from your reference." },
-        { t: "Mark the peaks", d: "Where is energy max? Usually the final chorus or outro. Everything else builds toward it." },
-        { t: "Note the odd stuff", d: "Stops, hits, a 3-bar turnaround, a 2-beat drop, a half-time bridge. These are what make it feel like the song." },
-        { t: "Total it up", d: "Sum the bars × 4 beats for a first length check against the original. If you're way longer, decide where to trim." }
+        { t: "Turn the click on and count", d: "Most of these songs are in 4/4: every bar is 1-2-3-4. The heavier line on the DAW grid is the next bar." },
+        { t: "Create empty blocks", d: "For every recipe row, drag an empty region for the stated number of bars. Rename or color it with the section name." },
+        { t: "Add the energy note", d: "Write 'quiet,' 'full,' 'half-time,' or 'STOP' in the region name. Those instructions matter more than fancy playing." },
+        { t: "Check with a scratch vocal", d: "Loop the section and sing it. If your phrase needs another bar, extend the block now. The recipe is a starting map, not a cage." }
       ],
       tips: [
-        "A two-bar intro beats an eight-bar intro for set flow — trim where the original dawdles.",
-        "Copy the section map into the DAW as markers/regions so the whole session is pre-blocked before you touch a note."
+        "Duplicate repeated verses and choruses instead of counting them again.",
+        "Different colors for verse, chorus, and breakdown make the whole song readable from across the room."
       ],
-      watchout: "Counting wrong here compounds: a wrong bar count in verse 1 makes the pre-chorus land early every time."
+      watchout: "Do not start detailed drums before the empty section blocks fit your vocal — structure changes are easiest while the project is still empty."
     },
     {
       id: "key-tempo", phase: "map", tool: "both", minutes: 5,
-      title: "Key, tempo & feel: lock the foundation",
-      intro: "Lock tempo and key before a single note. Use the Tools page — tap tempo against your reference — and decide the feel (straight vs. swing vs. half-time).",
+      title: "Set BPM and test the supplied key with your voice",
+      intro: "You do not have to identify key or tempo by ear. Start with the number on the song board, use Tap Tempo to verify the exact recording, and use your voice to approve the key.",
       steps: [
-        { t: "Tempo", d: "Tap along to the reference (or use your DAW's tempo detection) and round to a sensible whole BPM. Don't keep a 120.7 BPM file." },
-        { t: "Feel", d: "Straight 8ths/16ths, swing/shuffle, or half-time? Decide per section, not globally." },
-        { t: "Key", d: "Confirm the original, then your performance key for your range. Transpose now if needed — chart in numbers so it's trivial." },
-        { t: "Grid setup", d: "Set click/count-in, time signature (almost always 4/4 — flag any odd meters), and your BPM in the project." }
+        { t: "Type the recipe BPM", d: "Click the tempo number in the DAW and type the whole number shown on the board. For Sloop and Blister, build at the half-speed number first." },
+        { t: "Understand feel without theory", d: "Straight means evenly spaced hits. Double-time means the drums act twice as busy while the vocal keeps its pace. Half-time means the snare feels slow and heavy." },
+        { t: "Test the key", d: "Click the board's Hear chord buttons, loop the verse, and sing. If the highest section is comfortable, keep the key. If not, move every chord together with Transpose." },
+        { t: "Grid setup", d: "Choose 4/4, enable count-in and metronome, and set Snap/Quantize to 1/16 for drums. You can change note length later." }
       ],
       tips: [
         "Half-time vs. double-time is a feel choice, not a math error — decide it deliberately.",
@@ -80,11 +97,29 @@ window.STUDIO = (function () {
       watchout: "A swing/shuffle feel programmed as straight 16ths will sound wrong no matter how good the parts are."
     },
 
+    {
+      id: "piano-roll-zero", phase: "map", tool: "both", minutes: 7,
+      title: "Piano roll from zero: rectangles, rows, and the grid",
+      intro: "The piano roll looks like a spreadsheet turned sideways. Time runs left to right. Pitch runs low to high. A rectangle means 'play this row from here to here.' You will use the supplied letters instead of playing a keyboard.",
+      steps: [
+        { t: "Find the bar lines", d: "The darkest vertical lines divide bars; lighter lines divide beats and 16th-notes. Turn Snap on so rectangles land exactly on them." },
+        { t: "Find a note row", d: "The keyboard labels C notes. From C, the white rows rise C-D-E-F-G-A-B. Black rows are sharps/flats. Zoom vertically until labels are readable." },
+        { t: "Draw and resize", d: "Double-click or use the pencil to add a note. Drag its left edge to move the start and right edge to change duration. Delete with Backspace/Delete." },
+        { t: "Stack a chord", d: "Draw the first supplied note, then draw the second and third directly above it at the same time. Drag-select all three so they move as one block." },
+        { t: "Duplicate instead of replaying", d: "Copy/paste or Option/Alt-drag a correct bar. Change only the rows needed for the next chord. This is the main workflow for the whole EP." }
+      ],
+      tips: [
+        "If the DAW calls middle C C3 instead of C4, that is normal. Match the letter and relative low/middle/high position.",
+        "Solo one track while drawing, then turn the full band back on to judge it."
+      ],
+      watchout: "A rectangle one thin grid line late will sound sloppy. Keep Snap on and Quantize to 1/16 until you intentionally humanize a part."
+    },
+
     /* -------- BUILD — DRUMS -------- */
     {
       id: "bandlab-drums", phase: "build", tool: "bandlab", minutes: 7,
-      title: "Programming drums in BandLab's MIDI roll",
-      intro: "BandLab's piano roll is a proper drum programmer. General MIDI mapping: C1 = kick, D1 = snare, F#1 = closed hat, A#1 = open hat. Memorize those four and you'll fly.",
+      title: "BandLab drums: copy the lit squares",
+      intro: "No drumming theory is required. Open this app's Drum Machine beside BandLab and copy each lit square into the matching row: kick C1, snare D1, closed hat F#1, open hat A#1.",
       steps: [
         { t: "Create the track", d: "Click + → MIDI Instrument track → choose a drum kit (acoustic for rock/pop, electronic/hip-hop kit for modern)." },
         { t: "Make a region", d: "Click in the timeline to create a 1–2 bar region, double-click it to open the piano roll, set snap/quantize to 1/16." },
@@ -117,23 +152,40 @@ window.STUDIO = (function () {
       watchout: "Drummer sounds great immediately — don't trust the first take at a tempo it wasn't meant for. Always audition at your locked BPM."
     },
 
+    {
+      id: "finger-drums", phase: "build", tool: "both", minutes: 6,
+      title: "Use your finger drumming — then let quantize clean it",
+      intro: "Your finger-drumming experience is an advantage even if it is not session-player level. Capture the energy first; the DAW can pull each hit onto the grid.",
+      steps: [
+        { t: "Record one sound at a time", d: "Loop one bar. Finger-drum only kick, stop, then record snare, then hats. Layering is much easier than performing the whole kit at once." },
+        { t: "Use a slow practice tempo", d: "For 185–194 BPM songs, record at the half-speed number shown on the board. The pattern stays usable when tempo changes." },
+        { t: "Quantize", d: "Select the recorded notes and choose 1/16 Quantize at roughly 85–100% strength. Fix obvious misses by dragging or deleting them." },
+        { t: "Keep the best human part", d: "If the hats feel stiff after full quantize, keep your recorded hats and use perfectly drawn kick/snare. Hybrid is often better." },
+        { t: "Make fills separately", d: "Duplicate the final bar of a section, record one finger-drummed fill there, quantize it, and reuse only at real transitions." }
+      ],
+      tips: [
+        "Velocity is how hard a hit lands. Keep main snare hits louder than little pickup hits.",
+        "The Drum Machine preset gives you a safety net: copy it first, then replace one row with your performance."
+      ],
+      watchout: "Do not stack several unquantized takes because one feels weak. Edit one clean take or use the drawn preset."
+    },
+
     /* -------- BUILD — BASS -------- */
     {
       id: "bass", phase: "build", tool: "both", minutes: 5,
-      title: "Bass: lock the kick, play the roots",
-      intro: "The bass is the glue between drums and chords. Root notes on the kick's rhythm, passing tones for motion — and restraint is the whole skill.",
+      title: "Bass without playing: draw the chord-name note",
+      intro: "Bass is the easiest instrument to fake convincingly. If the recipe says C for one bar, draw one low C rectangle for that bar. The board supplies every note in order.",
       steps: [
-        { t: "Follow the chart", d: "Root on beat 1 of every chord, minimum. That alone carries the song." },
-        { t: "Lock with the kick", d: "Bass and kick hit together = solid low end. Anywhere they diverge, make it a deliberate choice." },
-        { t: "Choose length", d: "Short stabs vs. sustained. Match the song's pocket — note length is articulation." },
-        { t: "Pick the sound", d: "BandLab: fingered electric or 808/sub bass preset. GarageBand: Software Instrument bass, or record a real bass DI." }
+        { t: "Add a virtual bass", d: "BandLab: + → Virtual Instrument → electric/fingered bass. GarageBand: Software Instrument → Bass. Open the piano roll editor." },
+        { t: "Draw one long root", d: "Use the low letter named by the chord: C chord gets C2, F chord gets F2. Stretch it to the next chord boundary. Ignore all other notes for pass one." },
+        { t: "Copy the whole section", d: "Read the recipe left to right and duplicate repeated bars. Solo bass + drums and check that every new root lands with the section chart." },
+        { t: "Make it punk after it works", d: "Split each long note into eight equal 8th-note blocks, or copy the kick rhythm. Keep long notes in quiet/drop sections." }
       ],
       tips: [
-        "Don't play more notes than the drummer plays on kick — bass busy-ness kills the pocket.",
-        "Keep bass in the C1–C2 range so it sits under the keys and leaves the midrange open.",
-        "In GarageBand, lock the kick with Drummer's Follow — instant tightness."
+        "Some DAWs disagree about octave numbers; if C2 sounds too high or low, move it exactly one octave while keeping the letter C.",
+        "Velocity around 90–105 is enough. Identical maximum-velocity notes sound like a machine gun."
       ],
-      watchout: "A bass part with independent rhythm from the kick is where backing tracks fall apart — that's the foundation of the whole thing."
+      watchout: "Do not invent fills yet. A correct one-note root part is more useful than a clever wrong bass line."
     },
 
     /* -------- BUILD — KEYS -------- */
@@ -157,37 +209,38 @@ window.STUDIO = (function () {
 
     /* -------- BUILD — GUITARS -------- */
     {
-      id: "garageband-guitars", phase: "build", tool: "garageband", minutes: 6,
-      title: "Guitars in GarageBand: DI, Amp Designer, doubles",
-      intro: "For guitar in GarageBand, record a clean DI and tone-shape with Amp Designer (or mic a real amp). Double-track rhythm parts for width and pan them apart.",
+      id: "garageband-guitars", phase: "build", tool: "both", minutes: 8,
+      title: "Punk guitar without a guitarist: draw power blocks",
+      intro: "A power chord is only a supplied stack of two or three notes. The EP boards spell out each stack, so virtual guitar becomes drag, duplicate, and change the note letters — no fretting or keyboard playing.",
       steps: [
-        { t: "Track setup", d: "Audio track → pick an amp sim (Amp Designer) or set input to mic your amp. Set input in Preferences." },
-        { t: "Record to the click", d: "Use count-in, loop a section, and comp takes until the pocket's right." },
-        { t: "Double-track", d: "Play the part twice (two real performances, not copy-paste) and pan hard L/R for width on rhythm parts." },
-        { t: "MIDI alternative", d: "Software Instrument with a guitar patch works for sketches, but expect less realism than a real DI." }
+        { t: "Choose a virtual guitar", d: "BandLab: add a Virtual Instrument guitar and choose the driest rock patch available. GarageBand iPhone/iPad: Touch Instrument → Smart Guitar. GarageBand Mac: Software Instrument → guitar patch." },
+        { t: "Draw the supplied stack", d: "Example: C power block is C3 + G3 + C4. Put the three notes directly above one another with identical start and end points." },
+        { t: "Make the rhythm", d: "For fast punk, duplicate that stack eight times across a bar. In verses shorten every block so there is a tiny gap; in choruses make them nearly touch." },
+        { t: "Humanize just enough", d: "Offset the top note a few milliseconds later than the bottom note to imitate a strum. Vary velocity about 5–10 points, never random enough to lose the beat." },
+        { t: "Create width", d: "Duplicate to a second guitar track, change its amp tone, move it 10–20 ms later, and pan the two tracks left/right. Check mono for phase problems." }
       ],
       tips: [
-        "Double-tracking = two separate performances, not a duplicated region — that's what gives width.",
-        "Record DI and re-amp / tone-shape later so you're never stuck with one tone.",
-        "If you're the one playing guitar live on this song, this whole lesson applies to the parts you are NOT playing."
+        "Smart Guitar's chord strips are easiest on iPhone/iPad; tap the named chord and record, then quantize.",
+        "Virtual guitar will sound most convincing when the notes are short, the amp has gain, and the part is not exposed alone.",
+        "If a later budget allows one guest guitarist to replace these tracks, your MIDI blocks become a perfect guide."
       ],
-      watchout: "Copy-pasting a take and nudging it a few ms is fake doubling — it collapses to mono and sounds like phasing, not width."
+      watchout: "Do not use a ripped guitar stem. A deliberately synthetic guitar you created is legally and creatively yours; someone else's stem is not."
     },
     {
       id: "leave-it-out", phase: "build", tool: "both", minutes: 4,
-      title: "What to leave out (you play it live)",
-      intro: "A backing track that already contains your live parts fights you on stage. Decide the holes deliberately — this is what makes it a backing track, not a karaoke of yourself.",
+      title: "Leave the singer-shaped hole",
+      intro: "Your track is the band; you are the front person. Build everything around the fact that the lead vocal, ad-libs, rap phrasing, and crowd work happen live.",
       steps: [
-        { t: "Define your live role per song", d: "Lead vocal, rhythm guitar, etc. Don't double those parts in the track — or keep only a thin pad underneath for support." },
-        { t: "Leave a frequency hole", d: "If you sing, don't stack a loud pad or piano in the vocal range." },
-        { t: "Cue yourself", d: "Keep signature intro riffs in the track only if you are NOT playing them live. Otherwise you're racing yourself." },
-        { t: "One-guitarist plan", d: "If you might be the only guitarist, keep a rhythm guitar bed in the track but leave all leads out." }
+        { t: "No lead vocal in the show bounce", d: "A temporary scratch vocal is useful while arranging. Mute it before the clean show export." },
+        { t: "Keep the center open", d: "Kick and bass can stay center, but move guitars apart and keep pads quiet. Avoid a loud synth playing the vocal melody." },
+        { t: "Make a separate cue version", d: "If you need a spoken section name or count-in, put it on a cue/click stem for your monitor, not in the house mix." },
+        { t: "Use backing shouts on purpose", d: "Gang vocals can be part of a punk arrangement, but record your own and place them only where the recipe calls for impact." }
       ],
       tips: [
-        "The track supports you; it shouldn't already contain a better version of your part.",
-        "Your live guitar + a track guitar in the same register = mud. Pick one lane per register."
+        "A rough vocal recorded while building is a measuring tool, not a final performance.",
+        "Turn the full backing track down and sing at show volume; if every word still feels easy, the hole is working."
       ],
-      watchout: "Every part you leave in the track is a part you can't vary live — leave yourself room to breathe."
+      watchout: "Do not solve a buried vocal by mastering the backing louder. Remove or pan competing midrange parts first."
     },
 
     /* -------- ARRANGE -------- */
@@ -297,6 +350,30 @@ window.STUDIO = (function () {
 
   /* ============ DRUM PATTERNS (16-step, 16th notes) ============ */
   var drumPatterns = [
+    {
+      id: "punkstraight", name: "Straight Punk Drive", genre: "Punk", bpm: [160, 200],
+      desc: "Fast 8th-note drive: kick pushes the bar, snare stays on 2 and 4, hats never let up. Use this for Sloop John B, My Way, and Blister.",
+      kick:  [1,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0],
+      snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      chat:  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      ohat:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]
+    },
+    {
+      id: "punkdouble", name: "Pop-Punk Double-Time", genre: "Pop-punk", bpm: [90, 180],
+      desc: "A busier kick under a clean 2-and-4 snare. At 90–100 BPM it reads as double-time; at 170+ it becomes a hardcore sprint.",
+      kick:  [1,0,0,1,0,0,1,0,1,0,0,1,0,0,1,0],
+      snare: [0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0],
+      chat:  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      ohat:  [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0]
+    },
+    {
+      id: "hardcorehalf", name: "Hardcore Half-Time", genre: "Breakdown", bpm: [140, 190],
+      desc: "Kick on 1, snare on 3, open space between hits. Drop this into the American Girl / Black Flag-style breakdown.",
+      kick:  [1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0],
+      snare: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0],
+      chat:  [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
+      ohat:  [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0]
+    },
     {
       id: "rock", name: "Backbeat Rock", genre: "Rock / Pop", bpm: [90, 140],
       desc: "The universal backbeat. Kick on 1 & 3, snare on 2 & 4, hats on 8ths. The default starting point for covers.",
@@ -437,11 +514,36 @@ window.STUDIO = (function () {
   /* ============ CHEAT SHEETS ============ */
   var cheatSheets = [
     {
+      id: "no-player", title: "No-Instrument Piano-Roll Dictionary",
+      body: [
+        "BAR = four counts (1-2-3-4) in these songs.",
+        "PIANO ROLL = time left-to-right, low notes at bottom, high notes at top.",
+        "NOTE BLOCK = one rectangle; its row is pitch and its width is duration.",
+        "CHORD BLOCK = 2–3 note rectangles stacked with the same start/end.",
+        "ROOT = the chord-name note used by the bass (C chord → low C).",
+        "POWER BLOCK = root + fifth + root octave; each song board supplies all three notes.",
+        "QUANTIZE 1/16 = pull recorded hits to the nearest 16th-note grid line.",
+        "VELOCITY = how hard/loud a MIDI note is hit — not its speed.",
+        "Pass one: drums + bass roots + power blocks. Sing over it before adding anything else."
+      ]
+    },
+    {
+      id: "ep-map", title: "Five-Song EP Starting Points",
+      body: [
+        "Sloop John B (Me First version) — C · 185 BPM (build at 93) · first project.",
+        "Teenage Dirtbag — E · 94 BPM with double-time drums.",
+        "My Way (Sid Vicious approach) — E · 150 BPM · sparse lounge opening into punk.",
+        "Blister in the Sun — G · 194 BPM (build at 97) · G/C motion, quiet drop.",
+        "American Girl — D · 176 BPM production target · D-C-D-C-D-C-Bb-C breakdown.",
+        "These are starter arrangements: vocal-test the key and tap your exact reference before final tracking."
+      ]
+    },
+    {
       id: "method", title: "The 6-Phase Method",
       body: [
-        "1. PREP — pick one reference, decide tempo/key, declare your live holes, list signature moments.",
-        "2. MAP — chart every section with bar counts, mark peaks and stops, lock BPM/key/feel.",
-        "3. BUILD — drums → bass → keys/pads → guitars. Always in that order.",
+        "1. START — open one EP recipe, vocal-test its supplied key, choose the exact reference.",
+        "2. LAY OUT — copy the supplied section/bar map as empty colored timeline regions.",
+        "3. BUILD — copy drums → draw bass roots → draw virtual-guitar power blocks. No playing required.",
         "4. ARRANGE — dynamics by density, fills at section changes, one good stop-hit.",
         "5. MIX — balance for support, HPF everything non-bass, pan wide but leave center for you, −6 dB headroom.",
         "6. SHIP — export full mix + same-start-point stems, name them, back them up twice."
@@ -474,7 +576,7 @@ window.STUDIO = (function () {
         "3. Right-click region → Convert to MIDI Region to hand-edit fills.",
         "4. Software Instrument → bass. Follow Drummer to lock kick.",
         "5. Software Instrument → keys/pads. Wide pan, HPF 150 Hz.",
-        "6. Audio track → Amp Designer for real guitar DI; double-track, pan L/R.",
+        "6. No guitar player: iOS Smart Guitar chord strips, or Mac Software Instrument guitar; draw the board's supplied power blocks.",
         "7. Region per section; markers for the song map.",
         "8. Mix: balance, HPF, −6 dB headroom, mono check.",
         "9. Share → Export Song to Disk: full mix + stems.",
@@ -551,6 +653,179 @@ window.STUDIO = (function () {
     ]
   };
 
+  /* ============ THE FIVE-SONG EP ============ */
+  /* These are intentionally buildable starter arrangements, not claims of a
+     note-for-note transcription. The singer can make them theirs and adjust
+     bar counts against the exact reference recording they use. */
+  var epRecipes = [
+    {
+      id: "sloop", title: "Sloop John B", artist: "Me First and the Gimme Gimmes version",
+      key: "C", bpm: 185, feel: "Fast straight punk", status: "Best first build",
+      tempoNote: "Reference starting point: C major, 185 BPM. Work at 93 BPM while learning, then switch to 185.",
+      concept: "A bright three-chord punk sprint. This is the easiest place to learn the system because almost everything is C, F, or G.",
+      chords: ["C", "F", "G"], drumPreset: "punkstraight",
+      sections: [
+        { name: "Count-in", bars: 1, chords: "C (silent guide only)", energy: "Click only — four counts" },
+        { name: "Intro", bars: 16, chords: "C · C · F · G  ×4", energy: "Full band; crash every 4 bars" },
+        { name: "Verse 1", bars: 16, chords: "C×4 · G×2 · C×2 · F×2 · G×2 · C×2 · G · C", energy: "Palm-muted guitar; closed hats" },
+        { name: "Chorus", bars: 16, chords: "C×4 · G×2 · C×2 · F×2 · G×2 · C×2 · G · C", energy: "Open guitar; crash; backing shouts later" },
+        { name: "Instrumental turn", bars: 8, chords: "C · G · C · F · C · G · C · C", energy: "No lead vocal; one simple octave hook if wanted" },
+        { name: "Verse 2", bars: 16, chords: "Same as Verse 1", energy: "First 4 bars drums + bass, then guitars enter" },
+        { name: "Final chorus", bars: 16, chords: "Same as Chorus", energy: "Everything on; extra open hat" },
+        { name: "Outro", bars: 8, chords: "F · G · F · G · F · G · C · C (STOP)", energy: "Hit the last C together and leave silence" }
+      ],
+      bass: "For every chord block, draw one low root: C→C2, F→F2, G→G2. Start with one long note per bar; later change to eight short 8th-notes per bar for the fast punk drive.",
+      guitar: "Use power blocks, not a melody: C = C3+G3+C4; F = F2+C3+F3; G = G2+D3+G3. Draw 8 short blocks per bar. Make verse blocks quieter/shorter and chorus blocks louder/longer.",
+      extra: "Skip keys. Add a very quiet organ holding C, F, and G only if the chorus feels empty.",
+      vocalSpace: "No guide vocal, doubles, or melody in the show track. Your voice owns the center.",
+      firstPass: [
+        "Set the project to 93 BPM first. You are building at half speed, not changing the song.",
+        "Build only 8 intro bars with drums, three bass roots, and three guitar power blocks.",
+        "Loop those 8 bars and sing over them. If the key feels right, duplicate into the section map.",
+        "When the whole arrangement works, change the project to 185 BPM and tighten the note lengths."
+      ]
+    },
+    {
+      id: "dirtbag", title: "Teenage Dirtbag", artist: "Wheatus — rebuilt as punk",
+      key: "E", bpm: 94, feel: "Double-time punk at 94", status: "Second build",
+      tempoNote: "Keep the project at 94 BPM and make the drums feel double-time. That keeps the vocal phrasing familiar while the band sounds fast.",
+      concept: "Preserve the recognizable E-major harmony and turn the rhythm section into a fast pop-punk band. The contrast between smaller verses and huge choruses is the record.",
+      chords: ["E", "A", "B", "C#m", "G#m"], drumPreset: "punkdouble",
+      sections: [
+        { name: "Intro", bars: 4, chords: "E · B · E · A", energy: "Filtered/quiet guitar, then a one-beat drum pickup" },
+        { name: "Verse 1", bars: 16, chords: "E · B · E · A  ×3  |  C#m · A · B · B", energy: "Muted 8ths; drums light but fast" },
+        { name: "Chorus", bars: 8, chords: "E · A · B · C#m  |  E · A · B · B", energy: "Open power chords; full cymbals" },
+        { name: "Turnaround", bars: 4, chords: "E · B · E · A", energy: "Keep moving; short fill in bar 4" },
+        { name: "Verse 2", bars: 16, chords: "Same as Verse 1", energy: "Add a second guitar octave or thin pad" },
+        { name: "Chorus 2", bars: 8, chords: "Same as Chorus", energy: "Bigger than chorus 1" },
+        { name: "Dirtbag chant", bars: 8, chords: "E · A · E · A  ×2", energy: "Half-time kick; room for the vocal moment" },
+        { name: "Final verse/chorus", bars: 24, chords: "Verse pattern once, then Chorus pattern", energy: "Build from nearly empty to full blast" },
+        { name: "Outro", bars: 4, chords: "E · B · A · E (STOP)", energy: "One final E hit" }
+      ],
+      bass: "Draw the chord-name root as one bar notes: E2, A2, B2, C#2, G#2. When that follows the vocal correctly, split each note into steady 8ths in choruses only.",
+      guitar: "Power blocks: E2+B2+E3, A2+E3+A3, B2+F#3+B3, C#3+G#3+C#4, G#2+D#3+G#3. Verses are short muted blocks; choruses are open 8th-note blocks.",
+      extra: "A thin high synth playing only the root an octave up can replace a second guitar. Do not add a busy keyboard part.",
+      vocalSpace: "The vocal carries the story and dynamic. Pull guitars down 2–3 dB in every verse, then automate them up for choruses.",
+      firstPass: [
+        "Build the four-bar E · B · E · A loop first.",
+        "Sing the opening verse over that loop. Do not continue until the chord changes feel aligned to your phrasing.",
+        "Create one verse and one chorus; use duplication for the rest.",
+        "Add the double-time drum energy last — the project tempo stays 94."
+      ]
+    },
+    {
+      id: "myway", title: "My Way", artist: "Sid Vicious version",
+      key: "E", bpm: 150, feel: "Mock-ballad into punk blast", status: "Contrast song",
+      tempoNote: "Production target: 150 BPM. The opening can feel like 75 BPM without changing tempo — just use long notes and sparse drums.",
+      concept: "Keep the joke and the drama: a fake classy opening that gets destroyed by the punk band. The tempo stays fixed; density creates the gear change.",
+      chords: ["E", "E7", "C#7", "F#m", "B", "A", "Am"], drumPreset: "punkstraight",
+      sections: [
+        { name: "Count-in", bars: 1, chords: "E guide", energy: "Click to your monitor only" },
+        { name: "Fake lounge intro", bars: 16, chords: "E · E · E7 · C#7 | F#m · F#m · B · B | E · E7 · A · Am | E · B · E · E", energy: "No drums; held piano/organ; let the vocal lead" },
+        { name: "Pick-slide / pickup", bars: 1, chords: "E", energy: "Snare fill into the explosion" },
+        { name: "Punk verse", bars: 16, chords: "E · E · E · C# | F# · F# · B · B | E · E · A · A | E · B · E · E", energy: "Full straight punk beat" },
+        { name: "Punk verse 2", bars: 16, chords: "Same as Punk verse", energy: "Add second guitar or octave layer" },
+        { name: "Breakdown", bars: 8, chords: "A×2 · E×2 · F#×2 · B×2", energy: "Half-time drums; vocal in front" },
+        { name: "Final verse", bars: 16, chords: "Same as Punk verse", energy: "Fullest section" },
+        { name: "Outro", bars: 4, chords: "A · B · E · E (STOP)", energy: "Messy fill, clean final hit" }
+      ],
+      bass: "Opening: one long root per bar. Punk half: 8th-note roots. Use E2, C#2, F#2, B1/B2, A1/A2. The app's piano may label the same pitch one octave differently; trust the letter and use the low register.",
+      guitar: "Punk-half power blocks: E=E2+B2+E3; C#=C#3+G#3+C#4; F#=F#2+C#3+F#3; B=B2+F#3+B3; A=A2+E3+A3. The piano/organ keeps E7, C#7, F#m, and Am in the lounge opening; distorted guitar does not need those color notes.",
+      extra: "Opening piano/organ stacks: E=E3+G#3+B3; E7=E3+G#3+B3+D4; C#7=C#3+F3+G#3+B3; F#m=F#3+A3+C#4; B=B2+D#3+F#3; A=A2+C#3+E3; Am=A2+C3+E3. Hold one stack per displayed bar, freeze the last E, then cut it when the band enters.",
+      vocalSpace: "The opening belongs almost entirely to your performance. Keep the backing deliberately bare and do not quantize the vocal.",
+      firstPass: [
+        "Build the 16-bar lounge chord lane with one held chord per bar.",
+        "Record a rough vocal against it and move chord boundaries where your phrasing demands.",
+        "Duplicate the harmony as power-chord roots for the punk half.",
+        "Add the one-bar pickup and full drums only after both halves work separately."
+      ]
+    },
+    {
+      id: "blister", title: "Blister in the Sun", artist: "Violent Femmes — rebuilt as punk",
+      key: "G", bpm: 194, feel: "Fast straight punk with a drop", status: "Riff song",
+      tempoNote: "Reference neighborhood: about 192–195 BPM in G. Start at 97 BPM while drawing; switch to 194 for the finished punk version.",
+      concept: "The G-to-C motion makes the song recognizable. You do not need to perform the original guitar riff: turn that motion into blunt power chords and preserve the quiet breakdown.",
+      chords: ["G", "C", "Em", "D"], drumPreset: "punkstraight",
+      sections: [
+        { name: "Intro", bars: 16, chords: "G/C (2 beats each) for 16 bars", energy: "Guitar + bass first 8; full drums second 8" },
+        { name: "Verse 1", bars: 8, chords: "G/C (2 beats each) for 8 bars", energy: "Short power blocks; tight closed hats" },
+        { name: "Chorus", bars: 8, chords: "Em×2 · C×2 · Em×2 · C · D", energy: "Open chords; crash at the top" },
+        { name: "Verse 2", bars: 8, chords: "Same as Verse 1", energy: "Add a higher guitar octave" },
+        { name: "Chorus 2", bars: 8, chords: "Same as Chorus", energy: "Full band" },
+        { name: "Instrumental", bars: 16, chords: "G/C (2 beats each) for 16 bars", energy: "Finger-drum a fill in bars 8 and 16, then quantize" },
+        { name: "Whisper/drop", bars: 32, chords: "G/C (2 beats each) throughout", energy: "Repeat the verse material quietly; kick + muted bass only; no cymbals" },
+        { name: "Final chorus", bars: 8, chords: "Same as Chorus", energy: "Biggest entry in the song" },
+        { name: "Outro", bars: 16, chords: "G/C pattern ×15 bars · G (STOP)", energy: "Hard final G" }
+      ],
+      bass: "For every G/C bar, draw G2 for beats 1–2 and C3 for beats 3–4. Chorus roots are E2, C3, E2, C3, D2 following the displayed bar lengths.",
+      guitar: "Power blocks: G2+D3+G3, C3+G3+C4, E2+B2+E3, D2+A2+D3. Use two blocks per bar for the G/C sections; use eight short blocks per bar in the chorus.",
+      extra: "No keys required. A one-note noise riser into the final chorus is enough if you want a modern production touch.",
+      vocalSpace: "The whisper/drop only works if the backing gets genuinely small. Remove guitars and hats instead of just turning them down.",
+      firstPass: [
+        "At 97 BPM, build one bar: G for two beats, C for two beats.",
+        "Duplicate it eight times and sing a verse over it.",
+        "Build the Em · C · Em · C · D chorus as a separate block.",
+        "Only then switch to 194 BPM and add the fast punk drum pattern."
+      ]
+    },
+    {
+      id: "american", title: "American Girl", artist: "Humble Gods version + Black Flag-style breakdown",
+      key: "D", bpm: 176, feel: "West Coast punk / hardcore breakdown", status: "EP centerpiece",
+      tempoNote: "Production target: D major, 176 BPM. Tap the exact Humble Gods reference before final vocals and adjust the project if needed.",
+      concept: "Use the Tom Petty harmony with Humble Gods aggression, then interrupt it with a transposed Gimme Gimme Gimme-style D–C–B♭ breakdown. That breakdown is your new arrangement, not sampled audio.",
+      chords: ["D", "E", "G", "A", "Em", "Bm", "C", "Bb"], drumPreset: "punkdouble",
+      sections: [
+        { name: "Intro", bars: 8, chords: "D · E · G · A  ×2", energy: "Full guitar riff made from chord blocks" },
+        { name: "Verse 1", bars: 8, chords: "D · E · G · A  ×2", energy: "Driving hats; guitar slightly muted" },
+        { name: "Pre-chorus", bars: 8, chords: "D×2 · G · Em · A×4", energy: "Snare build through the last two A bars" },
+        { name: "Chorus", bars: 8, chords: "G · A · D · Bm · G · A · D · D", energy: "Open cymbals and widest guitars" },
+        { name: "Verse 2", bars: 8, chords: "Same as Verse 1", energy: "Bass + drums first two bars, guitar returns on bar 3" },
+        { name: "Chorus 2", bars: 8, chords: "Same as Chorus", energy: "Full band" },
+        { name: "Instrumental drive", bars: 16, chords: "D · E · G · A  ×4", energy: "No lead vocal; build fills toward the breakdown" },
+        { name: "Black Flag breakdown", bars: 8, chords: "D · C · D · C · D · C · Bb · C", energy: "Half-time first 4 bars; shouted count; full-speed last 4" },
+        { name: "Final chorus ×2", bars: 16, chords: "G · A · D · Bm · G · A · D · D  ×2", energy: "Crash and backing shouts; peak" },
+        { name: "Outro", bars: 8, chords: "D · E · G · A  ×2; stop on D after the last A", energy: "Fast fill into final D" }
+      ],
+      bass: "Draw one-bar roots for the main song: D2, E2, G2, A2, plus B1/B2 and E2. Breakdown roots are D2, C2, D2, C2, D2, C2, Bb1, C2. Split into 8ths after the structure is solid.",
+      guitar: "Main power blocks: D=D2+A2+D3; E=E2+B2+E3; G=G2+D3+G3; A=A2+E3+A3; B=B2+F#3+B3. Breakdown adds C=C3+G3+C4 and B♭=Bb2+F3+Bb3; sequence D, C, D, C, D, C, B♭, C — one blunt bar each.",
+      extra: "Skip pads during the breakdown. If the chorus needs lift, add a quiet high organ holding G, A, D, and Bm roots.",
+      vocalSpace: "Treat the breakdown as a live call-and-response space. Leave any shout/cue track out of the house mix unless it is intentionally part of the record.",
+      firstPass: [
+        "Build D · E · G · A as a four-bar loop and confirm the verse vocal against it.",
+        "Build G · A · D · Bm · G · A · D · D as the chorus loop.",
+        "Create the D · C · D · C · D · C · B♭ · C breakdown in its own region color.",
+        "Join the three blocks, then add the pre-chorus and transitions. Do not start with the entire song."
+      ]
+    }
+  ];
+
+  var epSongs = epRecipes.map(function (r) {
+    return {
+      id: "ep-" + r.id,
+      recipeId: r.id,
+      title: r.title,
+      artist: r.artist,
+      key: r.key,
+      bpm: r.bpm,
+      feel: r.feel,
+      notes: "Starter arrangement loaded. Adjust the key after a vocal range test and verify bar counts against your exact reference.",
+      steps: [
+        { label: "Open the recipe and read the four-step first pass", done: false },
+        { label: "Create the DAW project at the recipe BPM and key", done: false },
+        { label: "Add section markers / arrangement blocks", done: false },
+        { label: "Build one working verse + chorus loop", done: false },
+        { label: "Program or finger-drum, then quantize", done: false },
+        { label: "Draw bass root blocks from the recipe", done: false },
+        { label: "Draw virtual-guitar power blocks", done: false },
+        { label: "Duplicate sections and add transitions", done: false },
+        { label: "Sing a rough full pass and fix chord boundaries", done: false },
+        { label: "Mix with the vocal center left open", done: false },
+        { label: "Export full mix + same-start stems", done: false },
+        { label: "Test the show file on the playback rig", done: false }
+      ]
+    };
+  });
+
   /* ============ SONG STEP TEMPLATE ============ */
   var songSteps = [
     "Chart sections with bar counts",
@@ -577,6 +852,8 @@ window.STUDIO = (function () {
     gmDrumMap: gmDrumMap,
     cheatSheets: cheatSheets,
     licensing: licensing,
-    songSteps: songSteps
+    songSteps: songSteps,
+    epRecipes: epRecipes,
+    epSongs: epSongs
   };
 })();

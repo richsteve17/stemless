@@ -14,8 +14,23 @@
   };
   function loadDone() { return LS.get("stemless.lessons.done", []); }
   function saveDone(arr) { LS.set("stemless.lessons.done", arr); }
-  function loadSongs() { return LS.get("stemless.songs", []); }
   function saveSongs(arr) { LS.set("stemless.songs", arr); }
+  function loadSongs() {
+    var songs = LS.get("stemless.songs", null);
+    if (!Array.isArray(songs)) songs = [];
+
+    /* One-time, non-destructive migration: add the five requested EP boards.
+       Existing custom songs and progress are never replaced. */
+    if (!LS.get("stemless.ep.recipes.v1", false) && D.epSongs) {
+      D.epSongs.forEach(function (seed) {
+        var exists = songs.some(function (s) { return s.recipeId === seed.recipeId; });
+        if (!exists) songs.push(JSON.parse(JSON.stringify(seed)));
+      });
+      saveSongs(songs);
+      LS.set("stemless.ep.recipes.v1", true);
+    }
+    return songs;
+  }
   function loadLicensing() { return LS.get("stemless.licensing.done", []); }
   function saveLicensing(arr) { LS.set("stemless.licensing.done", arr); }
 
@@ -96,15 +111,19 @@
         }).join("")
       : '<p class="empty" style="padding:16px">No songs yet — add your first cover in <a href="#/songs">Your Songs</a>.</p>';
 
-    return pageHead("Dashboard", "Build your own backing tracks", "DIY the whole rhythm section so a cover only needs the mechanical — no master-use, no stems to clear. You own the recording.")
+    return pageHead("Dashboard", "You can build the band without playing an instrument", "You are producing with labeled blocks: copy a punk drum grid, draw the supplied bass roots and guitar-note stacks, then sing over the loop. Your DJ timing, finger-drumming feel, and front-person instincts are the skills that matter here.")
+      + '<div class="card start-card"><div><p class="eyebrow">Your first session</p><h2>Start with an 8-bar Sloop John B loop</h2><p>Do not build all five songs. Open the loaded recipe, set 93 BPM, and make only drums + C/F/G bass roots + C/F/G power blocks. When you can sing over that loop, the system is working.</p></div><button class="btn primary" onclick="window.openSong(\'ep-sloop\')">Open the first build →</button></div>'
       + '<div class="grid cols-3">'
-      + '<div class="card stat"><div class="value">' + pct + '%</div><div class="label">of the Method complete</div></div>'
-      + '<div class="card stat"><div class="value">' + songs.length + '</div><div class="label">songs on the board</div></div>'
-      + '<div class="card stat"><div class="value">' + total + '</div><div class="label">lessons, ~2h total</div></div>'
+      + '<div class="card stat"><div class="value">' + pct + '%</div><div class="label">of the guided method complete</div></div>'
+      + '<div class="card stat"><div class="value">5</div><div class="label">requested EP recipes loaded</div></div>'
+      + '<div class="card stat"><div class="value">0</div><div class="label">instruments you must know how to play</div></div>'
       + "</div>"
+      + '<div class="card"><h3>The whole job in four moves</h3><div class="mini-path">'
+      + '<div><b>1</b><span>Copy one section map</span></div><div><b>2</b><span>Copy the drum squares</span></div><div><b>3</b><span>Draw supplied bass + guitar blocks</span></div><div><b>4</b><span>Loop it and sing; adjust by ear</span></div>'
+      + '</div></div>'
       + '<div class="grid cols-2">'
-      + '<div class="card"><h3>Your path</h3>' + phases + '<a class="btn primary" style="margin-top:14px" href="#/method">Continue the Method</a></div>'
-      + '<div class="card"><h3>EP songs</h3>' + songList + '<a class="btn" style="margin-top:14px" href="#/songs">Manage songs</a></div>'
+      + '<div class="card"><h3>Your learning path</h3>' + phases + '<a class="btn primary" style="margin-top:14px" href="#/method">Start the zero-instrument method</a></div>'
+      + '<div class="card"><h3>Your five-song EP</h3>' + songList + '<a class="btn" style="margin-top:14px" href="#/songs">Open song recipes</a></div>'
       + "</div>"
       + '<div class="card"><h3>Quick tools</h3><div class="tool-tabs">'
       + '<a class="tool-tab" href="#/tools" onclick="window.setTool(\'drum\')">Drum Machine</a>'
@@ -122,7 +141,7 @@
     D.phases.forEach(function (p) { byPhase[p.id] = []; });
     D.lessons.forEach(function (l) { byPhase[l.phase].push(l); });
 
-    var html = pageHead("The Method", "Six phases, in order", "Drums → bass → keys → guitars, then arrange, mix, and ship. Check off lessons as you go — your progress saves automatically.")
+    var html = pageHead("The Method", "Zero-instrument, block-by-block", "You are not being sent away to learn guitar or piano. Learn the grid, copy one punk beat, draw supplied roots and power blocks, then make arrangement decisions with your voice and ears.")
       + '<div class="card"><div class="grid cols-2">';
     D.phases.forEach(function (p, i) {
       var pp = phaseProgress(p.id);
@@ -161,21 +180,73 @@
   }
 
   /* ================= Songs ================= */
-  var openSongs = new Set();
+  var openSongs = new Set(["ep-sloop"]);
   function songStepCount(s) { return s.steps.filter(function (x) { return x.done; }).length; }
+  function recipeForSong(s) {
+    if (!s || !s.recipeId || !D.epRecipes) return null;
+    return D.epRecipes.find(function (r) { return r.id === s.recipeId; }) || null;
+  }
+
+  function recipeHTML(r) {
+    var sections = r.sections.map(function (sec, i) {
+      return '<div class="recipe-section">'
+        + '<div class="recipe-section-num">' + String(i + 1).padStart(2, "0") + '</div>'
+        + '<div><strong>' + esc(sec.name) + '</strong><span>' + esc(sec.bars) + ' bar' + (sec.bars === 1 ? '' : 's') + '</span></div>'
+        + '<div class="recipe-chords">' + esc(sec.chords) + '</div>'
+        + '<div class="recipe-energy">' + esc(sec.energy) + '</div>'
+        + '</div>';
+    }).join("");
+    var chords = r.chords.map(function (c) {
+      return '<button class="chord-audition" data-hear="' + esc(c) + '" title="Hear ' + esc(c) + '">▶ ' + esc(c) + '</button>';
+    }).join("");
+    var firstPass = r.firstPass.map(function (s, i) {
+      return '<div class="build-step"><b>' + (i + 1) + '</b><span>' + esc(s) + '</span></div>';
+    }).join("");
+
+    return '<div class="recipe-wrap">'
+      + '<div class="recipe-hero"><div><span class="recipe-status">' + esc(r.status) + '</span><h3>Your build recipe</h3><p>' + esc(r.concept) + '</p></div>'
+      + '<div class="recipe-facts"><span><small>KEY</small>' + esc(r.key) + '</span><span><small>PROJECT</small>' + esc(r.bpm) + ' BPM</span><span><small>FEEL</small>' + esc(r.feel) + '</span></div></div>'
+      + '<div class="plain-note"><strong>Start here, not with the whole song.</strong><div class="build-steps">' + firstPass + '</div></div>'
+      + '<div class="card inset"><h3>Vocal key check</h3><p>Click a chord, sing a section, and listen for strain. These sounds are only a pitch guide — they are not part of your export.</p><div class="chord-row">' + chords + '</div><p class="micro">' + esc(r.tempoNote) + '</p></div>'
+      + '<details class="recipe-detail" open><summary>1 · Copy this section map</summary><div class="recipe-sections">' + sections + '</div><p class="micro">Each dot separates bars unless the chart says “2 beats each” or × a repeat count. This is a practical starter arrangement; extend a block if your exact vocal phrasing needs it.</p></details>'
+      + '<details class="recipe-detail" open><summary>2 · Draw the three band parts</summary><div class="track-plan">'
+      + '<div><span class="track-icon">DR</span><h4>Drums</h4><p>Copy <b>' + esc((D.drumPatterns.find(function (p) { return p.id === r.drumPreset; }) || {}).name || "Punk pattern") + '</b> into the DAW. Use the section energy notes to remove hats or switch to half-time.</p><button class="btn sm track-action" onclick="window.openDrumPreset(\'' + esc(r.drumPreset) + '\')">Open &amp; play this beat →</button></div>'
+      + '<div><span class="track-icon">BA</span><h4>Bass</h4><p>' + esc(r.bass) + '</p></div>'
+      + '<div><span class="track-icon">GT</span><h4>Virtual guitar</h4><p>' + esc(r.guitar) + '</p></div>'
+      + '<div><span class="track-icon">+</span><h4>Optional texture</h4><p>' + esc(r.extra) + '</p></div>'
+      + '</div><div class="vocal-hole"><strong>Your live-vocal space:</strong> ' + esc(r.vocalSpace) + '</div></details>'
+      + '<details class="recipe-detail"><summary>3 · Click-by-click in BandLab</summary><ol class="click-list">'
+      + '<li><b>Create → New Project.</b> Click the tempo at the top and type <b>' + esc(r.bpm) + '</b>. Set 4/4, turn on metronome and count-in.</li>'
+      + '<li><b>Add Track → Virtual Instrument → drum kit.</b> Create a one-bar MIDI region, open its piano roll, set Snap/Quantize to 1/16.</li>'
+      + '<li>Open this app’s <b>' + esc((D.drumPatterns.find(function (p) { return p.id === r.drumPreset; }) || {}).name || "punk") + '</b> preset beside BandLab. Copy kick to C1, snare to D1, closed hats to F#1, open hats to A#1. Loop the bar.</li>'
+      + '<li><b>Add Track → Virtual Instrument → electric bass.</b> Draw the low note sequence printed in Bass above. Use one long note per chord first.</li>'
+      + '<li><b>Add Track → Virtual Instrument → guitar.</b> Draw every supplied power stack. Duplicate it into 8th-note blocks only after the chord changes work under your voice.</li>'
+      + '<li>Duplicate regions across the section map, remove parts where the energy note says to drop, then record a scratch vocal and adjust boundaries.</li>'
+      + '</ol></details>'
+      + '<details class="recipe-detail"><summary>4 · Click-by-click in GarageBand</summary><ol class="click-list">'
+      + '<li><b>New Project → Empty Project.</b> Set tempo to <b>' + esc(r.bpm) + '</b>, key to <b>' + esc(r.key) + '</b>, 4/4, count-in on.</li>'
+      + '<li>Add a <b>Drummer</b> track and choose the hardest Rock player available, or add a Software Instrument drum kit for exact control. Make separate regions for quiet, full, and breakdown sections.</li>'
+      + '<li>Add <b>Software Instrument → Bass</b>. Open Piano Roll and draw the printed roots. If using Drummer, set Follow to the bass after the part exists.</li>'
+      + '<li>iPhone/iPad: use <b>Touch Instrument → Smart Guitar</b> and record the named chord strips. Mac: use a Software Instrument guitar and draw the printed power stacks in Piano Roll.</li>'
+      + '<li>Select each performance and apply 1/16 Quantize. Shorten verse guitar notes; leave chorus notes more open. Copy repeated sections instead of replaying them.</li>'
+      + '<li>Record a scratch vocal, fix section lengths, then mute that vocal before exporting the clean show backing track.</li>'
+      + '</ol></details>'
+      + '<div class="recipe-disclaimer">Arrangement recipe, not a note-for-note transcription. No lyrics or original audio are included; verify the map against the exact recording you are covering.</div>'
+      + '</div>';
+  }
 
   function renderSongs() {
     var songs = loadSongs();
-    var html = pageHead("Your Songs", "One board per cover", "Every song gets the full build checklist. Add the EP, work top to bottom, and the dashboard tracks it.")
-      + '<div class="card"><h3>Add a song</h3>'
-      + '<div class="row">'
+    var html = pageHead("Your Songs", "Your five punk builds are loaded", "Open one board for the supplied key, BPM, section map, bass notes, virtual-guitar stacks, and exact BandLab/GarageBand order. No instrument performance is assumed.")
+      + '<div class="card no-play-card"><div><h3>Read the recipe like a DJ timeline</h3><p><b>Bars</b> are four counts. <b>Chord dots</b> move left to right in time. <b>×2</b> means duplicate. Build one loop, sing over it, then copy it — that is the entire operating system.</p></div><button class="btn" id="restore-ep">Restore missing EP boards</button></div>'
+      + '<details class="add-song"><summary>+ Add another song later</summary><div class="card"><div class="row">'
       + '<div class="field"><label>Song title</label><input type="text" id="ns-title" placeholder="e.g. Dreams"></div>'
       + '<div class="field"><label>Artist</label><input type="text" id="ns-artist" placeholder="Fleetwood Mac"></div>'
       + '<div class="field"><label>Key</label><select id="ns-key">' + keyOptions("C") + "</select></div>"
       + '<div class="field"><label>BPM</label><input type="number" id="ns-bpm" value="120" min="40" max="240"></div>'
       + '<div class="field"><label>Feel</label><select id="ns-feel"><option>Straight</option><option>Swing</option><option>Half-time</option></select></div>'
       + '<div class="field" style="flex:0 0 auto"><button class="btn primary" id="ns-add">+ Add song</button></div>'
-      + "</div></div>";
+      + "</div></div></details>";
 
     if (!songs.length) {
       html += '<div class="empty">No songs yet. Add your first cover above and the build checklist appears here.</div>';
@@ -186,10 +257,12 @@
       var c = songStepCount(s), tot = s.steps.length;
       var pct = tot ? Math.round(c / tot * 100) : 0;
       var open = openSongs.has(s.id);
+      var recipe = recipeForSong(s);
       html += '<div class="song-card"><div class="song-head" data-toggle="' + esc(s.id) + '" style="cursor:pointer">'
         + '<div><div class="s-title">' + esc(s.title) + '</div><div class="s-sub">' + esc(s.artist) + "</div></div>"
         + '<div class="spacer"></div>'
         + '<div class="song-tags">'
+        + (recipe ? '<span class="tag recipe-tag">GUIDED BUILD</span>' : '')
         + '<span class="tag">key <b>' + esc(s.key) + "</b></span>"
         + '<span class="tag"><b>' + esc(s.bpm) + "</b> BPM</span>"
         + '<span class="tag">' + esc(s.feel) + "</span>"
@@ -199,6 +272,8 @@
         + "</div>";
       if (open) {
         html += '<div class="song-body">'
+          + (recipe ? recipeHTML(recipe) : '')
+          + '<details class="project-admin"' + (recipe ? '' : ' open') + '><summary>' + (recipe ? 'Progress checklist & project settings' : 'Song settings & checklist') + '</summary><div class="project-admin-body">'
           + '<div class="row">'
           + '<div class="field"><label>Title</label><input type="text" data-field="title" data-id="' + esc(s.id) + '" value="' + esc(s.title) + '"></div>'
           + '<div class="field"><label>Artist</label><input type="text" data-field="artist" data-id="' + esc(s.id) + '" value="' + esc(s.artist) + '"></div>'
@@ -213,7 +288,7 @@
           + '<div style="margin-top:14px;display:flex;gap:10px">'
           + '<button class="btn sm danger" data-del="' + esc(s.id) + '">Delete song</button>'
           + '<button class="btn sm" data-addstep="' + esc(s.id) + '">+ Add custom step</button>'
-          + "</div></div>";
+          + "</div></div></details></div>";
       }
       html += "</div>";
     });
@@ -224,10 +299,34 @@
     return D.keyNames.map(function (k) { return '<option' + (k === sel ? " selected" : "") + ">" + k + "</option>"; }).join("");
   }
   function feelOptions(sel) {
-    return ["Straight", "Swing", "Half-time"].map(function (f) { return '<option' + (f === sel ? " selected" : "") + ">" + f + "</option>"; }).join("");
+    var opts = ["Straight", "Double-time", "Swing", "Half-time"];
+    if (sel && opts.indexOf(sel) === -1) opts.unshift(sel);
+    return opts.map(function (f) { return '<option' + (f === sel ? " selected" : "") + ">" + esc(f) + "</option>"; }).join("");
   }
 
   function initSongs() {
+    var restore = document.getElementById("restore-ep");
+    if (restore) restore.addEventListener("click", function () {
+      var songs = loadSongs(), added = 0;
+      (D.epSongs || []).forEach(function (seed) {
+        if (!songs.some(function (s) { return s.recipeId === seed.recipeId; })) {
+          songs.push(JSON.parse(JSON.stringify(seed))); added++;
+        }
+      });
+      saveSongs(songs);
+      openSongs.add("ep-sloop");
+      document.getElementById("app").innerHTML = renderSongs(); initSongs();
+      toast(added ? "Restored " + added + " EP board" + (added === 1 ? "." : "s.") : "All five EP boards are already here.");
+    });
+
+    document.querySelectorAll("[data-hear]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        playGuideChord(el.getAttribute("data-hear"));
+        el.classList.add("sounding");
+        setTimeout(function () { el.classList.remove("sounding"); }, 550);
+      });
+    });
+
     var addBtn = document.getElementById("ns-add");
     if (addBtn) addBtn.addEventListener("click", function () {
       var title = (document.getElementById("ns-title").value || "").trim();
@@ -310,7 +409,7 @@
   var activeTool = "drum";
   function renderTools() {
     var tabs = [["drum", "Drum Machine"], ["tap", "Tap Tempo"], ["structure", "Song Structure"], ["numbers", "Numbers & Chords"], ["transpose", "Transpose"]];
-    var html = pageHead("Tools", "The workbench", "Audition drum patterns, find your tempo, build the section map, and convert chords between keys.")
+    var html = pageHead("Tools", "Hear it before you draw it", "Play the punk drum grids, tap the exact reference tempo, lay out bars, hear key chords, and transpose every supplied block together.")
       + '<div class="tool-tabs">'
       + tabs.map(function (t) { return '<button class="tool-tab' + (activeTool === t[0] ? " active" : "") + '" data-tool="' + t[0] + '">' + t[1] + "</button>"; }).join("")
       + '</div><div id="tool-body"></div>';
@@ -349,7 +448,7 @@
     drumState.bpm = p.bpm[0] + Math.round((p.bpm[1] - p.bpm[0]) / 2);
     drumState.pattern = p.id;
   }
-  loadPattern("rock");
+  loadPattern("punkstraight");
 
   function drumHTML() {
     var opts = D.drumPatterns.map(function (p) {
@@ -386,6 +485,26 @@
       var data = noiseBuf.getChannelData(0);
       for (var i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
     }
+  }
+  function playGuideChord(symbol) {
+    var parsed = parseChord(symbol);
+    if (!parsed) return;
+    ensureAudio();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var quality = parsed.quality || "";
+    var intervals = /^m(?!aj)/i.test(quality) ? [0, 3, 7] : /dim/i.test(quality) ? [0, 3, 6] : [0, 4, 7];
+    var now = audioCtx.currentTime + 0.02;
+    intervals.forEach(function (interval, i) {
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      var midi = 48 + parsed.pc + interval;
+      osc.type = i === 0 ? "triangle" : "sine";
+      osc.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.12, now + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.85);
+    });
   }
   function env(gain, t, peak, dur) {
     gain.gain.setValueAtTime(0.0001, t);
@@ -533,6 +652,7 @@
     return '<div class="card"><div class="tap-btn" id="tap-btn"><span class="tap-readout" id="tap-bpm">—</span><span class="tap-hint">Tap the beat (keyboard: press T). Tap at least 4 times.</span></div></div>'
       + '<div class="card"><h3>Why it matters</h3><p>Match the BPM to your reference so the backing track grooves with the original feel. Round to a whole number before you lock it into the project.</p></div>';
   }
+  var tapKeyHandler = null;
   function initTap() {
     var taps = [], idleTimer = null;
     function reset() {
@@ -546,16 +666,19 @@
         while (taps.length && now - taps[0] > 2500) taps.shift();
         if (taps.length > 1) {
           var bpm = 60000 * (taps.length - 1) / (taps[taps.length - 1] - taps[0]);
-          document.getElementById("tap-bpm").textContent = Math.round(bpm) + " BPM";
+          var out = document.getElementById("tap-bpm");
+          if (out) out.textContent = Math.round(bpm) + " BPM";
         }
       }
       if (idleTimer) clearTimeout(idleTimer);
       idleTimer = setTimeout(reset, 2500);
     }
     document.getElementById("tap-btn").addEventListener("click", tap);
-    window.addEventListener("keydown", function (e) {
-      if (e.key === "t" || e.key === "T") tap();
-    });
+    if (tapKeyHandler) window.removeEventListener("keydown", tapKeyHandler);
+    tapKeyHandler = function (e) {
+      if ((e.key === "t" || e.key === "T") && currentRoute() === "tools" && activeTool === "tap") tap();
+    };
+    window.addEventListener("keydown", tapKeyHandler);
   }
 
   /* ---------- Structure Builder ---------- */
@@ -769,7 +892,13 @@
     toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
   }
 
-  /* ================= Global: lesson checkboxes ================= */
+  /* ================= Global lesson interactions ================= */
+  document.addEventListener("click", function (e) {
+    var head = e.target && e.target.closest ? e.target.closest("[data-lesson]") : null;
+    if (!head) return;
+    var lesson = head.closest(".lesson");
+    if (lesson) lesson.classList.toggle("open");
+  });
   document.addEventListener("change", function (e) {
     var t = e.target;
     if (t && t.hasAttribute && t.hasAttribute("data-done")) {
@@ -790,6 +919,21 @@
     if (["drum", "tap", "structure", "numbers", "transpose"].indexOf(t) !== -1) activeTool = t;
     if (currentRoute() !== "tools") location.hash = "#/tools";
     else renderToolBody();
+  };
+  window.openDrumPreset = function (id) {
+    loadPattern(id);
+    activeTool = "drum";
+    if (currentRoute() !== "tools") location.hash = "#/tools";
+    else renderToolBody();
+  };
+  window.openSong = function (id) {
+    openSongs.add(id);
+    if (currentRoute() !== "songs") location.hash = "#/songs";
+    else { document.getElementById("app").innerHTML = renderSongs(); initSongs(); }
+    setTimeout(function () {
+      var el = document.querySelector('[data-toggle="' + id + '"]');
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
   };
 
   if (!location.hash) location.hash = "#/dashboard";

@@ -221,6 +221,79 @@ label { font-size: 12px; color: var(--muted); font-weight: 600; display: block; 
 .song-steps { margin-top: 12px; }
 .song-progress { font-family: var(--mono); font-size: 12px; color: var(--accent); }
 
+/* ---------- Guided EP builds ---------- */
+.start-card {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  border-color: rgba(245,165,36,.45);
+  background: linear-gradient(115deg, rgba(245,165,36,.12), var(--panel) 62%);
+}
+.start-card h2 { margin: 0 0 8px; font-size: 21px; }
+.start-card p { margin: 0; max-width: 65ch; }
+.start-card .btn { flex: 0 0 auto; }
+.mini-path { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.mini-path > div { display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--panel-2); border-radius: 10px; }
+.mini-path b { flex: 0 0 26px; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; color: #17110a; background: var(--accent); font-family: var(--mono); }
+.mini-path span { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.no-play-card { display: flex; align-items: center; justify-content: space-between; gap: 22px; }
+.no-play-card p { color: var(--muted); }
+.add-song { margin: 0 0 18px; }
+.add-song > summary, .project-admin > summary {
+  color: var(--muted); cursor: pointer; font-size: 13px; font-weight: 700; padding: 9px 2px;
+}
+.add-song > .card { margin-top: 8px; }
+.recipe-tag { color: var(--accent); border-color: rgba(245,165,36,.35); background: var(--accent-soft); }
+.recipe-wrap { padding-top: 18px; }
+.recipe-hero {
+  display: flex; justify-content: space-between; gap: 22px; align-items: flex-end;
+  padding: 22px; margin-bottom: 14px; border-radius: 12px;
+  background: linear-gradient(130deg, rgba(245,165,36,.16), rgba(245,165,36,.035));
+  border: 1px solid rgba(245,165,36,.3);
+}
+.recipe-hero h3 { margin: 5px 0 5px; font-size: 21px; }
+.recipe-hero p { color: var(--muted); max-width: 62ch; margin: 0; }
+.recipe-status { color: var(--accent); font-size: 10px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+.recipe-facts { display: flex; flex: 0 0 auto; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.recipe-facts > span { min-width: 82px; background: rgba(12,14,19,.65); border: 1px solid var(--line-2); padding: 8px 10px; border-radius: 9px; font-family: var(--mono); font-weight: 700; }
+.recipe-facts small { display: block; color: var(--faint); font-size: 8px; letter-spacing: .12em; margin-bottom: 2px; }
+.plain-note { padding: 18px 20px; border-radius: 12px; background: var(--panel-2); margin-bottom: 14px; }
+.plain-note > strong { color: var(--accent); }
+.build-steps { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin-top: 12px; }
+.build-step { display: flex; align-items: flex-start; gap: 9px; color: var(--muted); font-size: 13px; }
+.build-step b { flex: 0 0 23px; width: 23px; height: 23px; display: grid; place-items: center; border-radius: 7px; background: var(--bg); color: var(--accent); font-family: var(--mono); }
+.card.inset { background: var(--bg); padding: 17px 18px; }
+.card.inset > p { color: var(--muted); font-size: 13.5px; }
+.chord-row { display: flex; gap: 7px; flex-wrap: wrap; margin: 12px 0; }
+.chord-audition { border: 1px solid var(--line-2); background: var(--panel-2); color: var(--text); border-radius: 9px; padding: 8px 12px; cursor: pointer; font-family: var(--mono); font-weight: 700; transition: all .12s; }
+.chord-audition:hover, .chord-audition.sounding { color: #17110a; border-color: var(--accent); background: var(--accent); }
+.micro { color: var(--faint) !important; font-size: 11.5px !important; margin: 8px 0 0 !important; }
+.recipe-detail { border: 1px solid var(--line); border-radius: 12px; margin: 10px 0; background: rgba(12,14,19,.35); overflow: hidden; }
+.recipe-detail > summary { cursor: pointer; padding: 14px 17px; font-size: 14px; font-weight: 750; color: var(--text); background: var(--panel-2); }
+.recipe-detail[open] > summary { color: var(--accent); border-bottom: 1px solid var(--line); }
+.recipe-detail > :not(summary) { margin-left: 17px; margin-right: 17px; }
+.recipe-sections { padding: 10px 0 0; }
+.recipe-section { display: grid; grid-template-columns: 34px 145px minmax(200px, 1.35fr) minmax(170px, 1fr); align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.recipe-section:last-child { border-bottom: 0; }
+.recipe-section-num { font-family: var(--mono); color: var(--faint); font-size: 11px; }
+.recipe-section strong { display: block; font-size: 13.5px; }
+.recipe-section span { color: var(--faint); font-family: var(--mono); font-size: 10px; }
+.recipe-chords { font-family: var(--mono); color: var(--text); font-size: 12.5px; }
+.recipe-energy { color: var(--muted); font-size: 12.5px; }
+.track-plan { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px 0; }
+.track-plan > div { position: relative; padding: 16px 16px 14px 56px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.track-plan h4 { margin: 0 0 5px; font-size: 13.5px; }
+.track-plan p { margin: 0; color: var(--muted); font-size: 12.5px; }
+.track-plan .track-action { margin-top: 11px; }
+.track-icon { position: absolute; left: 14px; top: 16px; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-family: var(--mono); font-size: 10px; font-weight: 800; }
+.vocal-hole { margin: 0 17px 16px !important; padding: 12px 14px; border-left: 3px solid var(--garageband); background: rgba(79,209,197,.07); color: var(--muted); font-size: 13px; }
+.vocal-hole strong { color: var(--garageband); }
+.click-list { padding: 14px 18px 14px 36px; color: var(--muted); }
+.click-list li { margin: 0 0 10px; padding-left: 5px; font-size: 13.5px; }
+.click-list li::marker { color: var(--accent); font-family: var(--mono); font-weight: 800; }
+.click-list b { color: var(--text); }
+.recipe-disclaimer { margin: 14px 0 18px; padding: 11px 13px; border-radius: 9px; border: 1px dashed var(--line-2); color: var(--faint); font-size: 11.5px; }
+.project-admin { margin: 18px 0 2px; border-top: 1px solid var(--line); }
+.project-admin-body { padding-top: 12px; }
+
 /* ---------- Tools ---------- */
 .tool-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 .tool-tab {
@@ -300,6 +373,15 @@ table.ref tr:last-child td { border-bottom: none; }
   .sidebar-foot { display: none; }
   .main { padding: 22px 18px 80px; }
   .kv { grid-template-columns: 1fr; }
+  .start-card, .no-play-card, .recipe-hero { align-items: stretch; flex-direction: column; }
+  .start-card .btn, .no-play-card .btn { align-self: flex-start; }
+  .mini-path, .build-steps, .track-plan { grid-template-columns: 1fr; }
+  .recipe-facts { justify-content: flex-start; }
+  .recipe-section { grid-template-columns: 26px 1fr; }
+  .recipe-chords, .recipe-energy { grid-column: 2; }
+  .song-head { align-items: flex-start; flex-wrap: wrap; }
+  .song-head .spacer { display: none; }
+  .song-tags { width: 100%; }
 }
 
 /* ---------- Print ---------- */
