@@ -554,7 +554,7 @@ window.STUDIO = (function () {
       body: gmDrumMap.map(function (d) { return d.key + " → " + d.sound; })
     },
     {
-      id: "bandlab-flow", title: "BandLab Quick Workflow",
+      id: "bandlab-flow", tool: "bandlab", title: "BandLab Quick Workflow",
       body: [
         "1. bandlab.com → Create → Mix Editor.",
         "2. Set tempo (click BPM) and metronome.",
@@ -569,7 +569,7 @@ window.STUDIO = (function () {
       ]
     },
     {
-      id: "garageband-flow", title: "GarageBand Quick Workflow",
+      id: "garageband-flow", tool: "garageband", title: "GarageBand Quick Workflow",
       body: [
         "1. New project → set tempo, key, count-in.",
         "2. Add track → Drummer → pick a player. XY pad: verse low-left, chorus up-right.",

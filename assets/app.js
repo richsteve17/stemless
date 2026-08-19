@@ -34,6 +34,24 @@
   function loadLicensing() { return LS.get("stemless.licensing.done", []); }
   function saveLicensing(arr) { LS.set("stemless.licensing.done", arr); }
 
+  /* DAW picker — HP/Windows runs BandLab, Mac/iPhone runs GarageBand. */
+  function loadDaw() {
+    var d = LS.get("stemless.daw", null);
+    return d === "bandlab" ? "bandlab" : "garageband";
+  }
+  function saveDaw(d) { LS.set("stemless.daw", d); }
+  function dawName() { return loadDaw() === "bandlab" ? "BandLab" : "GarageBand"; }
+  function updateDawBadge() {
+    var el = document.getElementById("sideDaw");
+    if (!el) return;
+    el.textContent = dawName();
+    var holder = el.closest(".daw-locked");
+    if (holder) {
+      holder.classList.remove("bandlab", "garageband");
+      holder.classList.add(loadDaw());
+    }
+  }
+
   function esc(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -62,16 +80,24 @@
       tools: renderTools, cheats: renderCheats, licensing: renderLicensing
     };
     document.getElementById("app").innerHTML = views[route]();
-    var inits = { tools: initTools, songs: initSongs, licensing: initLicensing };
+    var inits = { dashboard: initDashboard, tools: initTools, songs: initSongs, licensing: initLicensing };
     if (inits[route]) inits[route]();
+    updateDawBadge();
     window.scrollTo(0, 0);
   }
   window.addEventListener("hashchange", navigate);
 
   /* ================= Progress ================= */
   function doneSet() { return new Set(loadDone()); }
-  function lessonCount() { return D.lessons.length; }
-  function doneCount() { return loadDone().length; }
+  function visibleLessons() {
+    var daw = loadDaw();
+    return D.lessons.filter(function (l) { return l.tool === daw || l.tool === "both"; });
+  }
+  function lessonCount() { return visibleLessons().length; }
+  function doneCount() {
+    var ids = new Set(visibleLessons().map(function (l) { return l.id; }));
+    return loadDone().filter(function (id) { return ids.has(id); }).length;
+  }
   function updateSidebar() {
     var total = lessonCount(), done = doneCount();
     var pct = total ? Math.round(done / total * 100) : 0;
@@ -80,7 +106,7 @@
   }
 
   function phaseProgress(phaseId) {
-    var ls = D.lessons.filter(function (l) { return l.phase === phaseId; });
+    var ls = visibleLessons().filter(function (l) { return l.phase === phaseId; });
     var done = doneSet();
     var c = ls.filter(function (l) { return done.has(l.id); }).length;
     return { total: ls.length, done: c, pct: ls.length ? Math.round(c / ls.length * 100) : 0 };
@@ -111,8 +137,14 @@
         }).join("")
       : '<p class="empty" style="padding:16px">No songs yet — add your first cover in <a href="#/songs">Your Songs</a>.</p>';
 
+    var daw = loadDaw();
     return pageHead("Dashboard", "You can build the band without playing an instrument", "You are producing with labeled blocks: copy a punk drum grid, draw the supplied bass roots and guitar-note stacks, then sing over the loop. Your DJ timing, finger-drumming feel, and front-person instincts are the skills that matter here.")
-      + '<div class="card start-card"><div><p class="eyebrow">Your first session</p><h2>Start with an 8-bar Sloop John B loop</h2><p>Do not build all five songs. Open the loaded recipe, set 93 BPM, and make only drums + C/F/G bass roots + C/F/G power blocks. When you can sing over that loop, the system is working.</p></div><button class="btn primary" onclick="window.openSong(\'ep-sloop\')">Open the first build →</button></div>'
+      + '<div class="card daw-picker"><div class="daw-picker-head"><p class="eyebrow">Step 0 · Pick your studio</p><h2>Where are you building the EP?</h2><p>HP / Windows → BandLab. Mac / iPhone → GarageBand. Lessons, click-by-click steps, and cheat sheets follow this pick.</p></div>'
+      + '<div class="daw-options">'
+      + '<button class="daw-opt bandlab' + (daw === "bandlab" ? " selected" : "") + '" data-daw="bandlab"><b>BandLab</b><span>HP / Windows · free at bandlab.com → Create → Mix Editor</span></button>'
+      + '<button class="daw-opt garageband' + (daw === "garageband" ? " selected" : "") + '" data-daw="garageband"><b>GarageBand</b><span>Mac / iPhone · already on your Apple gear</span></button>'
+      + '</div></div>'
+      + '<div class="card start-card"><div><p class="eyebrow">Your first session</p><h2>Start with an 8-bar Sloop John B loop</h2><p>Do not build all five songs. Open the loaded recipe, set 93 BPM, and make only drums + C/F/G bass roots + C/F/G power blocks in <b>' + dawName() + '</b>. When you can sing over that loop, the system is working.</p></div><button class="btn primary" onclick="window.openSong(\'ep-sloop\')">Open the first build →</button></div>'
       + '<div class="grid cols-3">'
       + '<div class="card stat"><div class="value">' + pct + '%</div><div class="label">of the guided method complete</div></div>'
       + '<div class="card stat"><div class="value">5</div><div class="label">requested EP recipes loaded</div></div>'
@@ -134,14 +166,29 @@
       + "</div></div>";
   }
 
+  function initDashboard() {
+    document.querySelectorAll(".daw-opt").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var picked = btn.getAttribute("data-daw");
+        var changed = picked !== loadDaw();
+        saveDaw(picked);
+        document.getElementById("app").innerHTML = renderDashboard();
+        initDashboard();
+        updateSidebar();
+        updateDawBadge();
+        if (changed) toast("Studio locked to " + dawName() + ". Lessons and steps updated.");
+      });
+    });
+  }
+
   /* ================= Method ================= */
   function renderMethod() {
     var done = doneSet();
     var byPhase = {};
     D.phases.forEach(function (p) { byPhase[p.id] = []; });
-    D.lessons.forEach(function (l) { byPhase[l.phase].push(l); });
+    visibleLessons().forEach(function (l) { byPhase[l.phase].push(l); });
 
-    var html = pageHead("The Method", "Zero-instrument, block-by-block", "You are not being sent away to learn guitar or piano. Learn the grid, copy one punk beat, draw supplied roots and power blocks, then make arrangement decisions with your voice and ears.")
+    var html = pageHead("The Method", "Zero-instrument, block-by-block · " + dawName(), "You are not being sent away to learn guitar or piano. Learn the grid, copy one punk beat, draw supplied roots and power blocks, then make arrangement decisions with your voice and ears. Showing steps for " + dawName() + " — change the pick on Start Here.")
       + '<div class="card"><div class="grid cols-2">';
     D.phases.forEach(function (p, i) {
       var pp = phaseProgress(p.id);
@@ -203,6 +250,26 @@
       return '<div class="build-step"><b>' + (i + 1) + '</b><span>' + esc(s) + '</span></div>';
     }).join("");
 
+    /* Show only the picked DAW's click-by-click list. */
+    var daw = loadDaw();
+    var clickSteps = daw === "bandlab"
+      ? '<details class="recipe-detail" open><summary>3 · Click-by-click in BandLab</summary><ol class="click-list">'
+      + '<li><b>Create → New Project.</b> Click the tempo at the top and type <b>' + esc(r.bpm) + '</b>. Set 4/4, turn on metronome and count-in.</li>'
+      + '<li><b>Add Track → Virtual Instrument → drum kit.</b> Create a one-bar MIDI region, open its piano roll, set Snap/Quantize to 1/16.</li>'
+      + '<li>Open this app’s <b>' + esc((D.drumPatterns.find(function (p) { return p.id === r.drumPreset; }) || {}).name || "punk") + '</b> preset beside BandLab. Copy kick to C1, snare to D1, closed hats to F#1, open hats to A#1. Loop the bar.</li>'
+      + '<li><b>Add Track → Virtual Instrument → electric bass.</b> Draw the low note sequence printed in Bass above. Use one long note per chord first.</li>'
+      + '<li><b>Add Track → Virtual Instrument → guitar.</b> Draw every supplied power stack. Duplicate it into 8th-note blocks only after the chord changes work under your voice.</li>'
+      + '<li>Duplicate regions across the section map, remove parts where the energy note says to drop, then record a scratch vocal and adjust boundaries.</li>'
+      + '</ol></details>'
+      : '<details class="recipe-detail" open><summary>3 · Click-by-click in GarageBand</summary><ol class="click-list">'
+      + '<li><b>New Project → Empty Project.</b> Set tempo to <b>' + esc(r.bpm) + '</b>, key to <b>' + esc(r.key) + '</b>, 4/4, count-in on.</li>'
+      + '<li>Add a <b>Drummer</b> track and choose the hardest Rock player available, or add a Software Instrument drum kit for exact control. Make separate regions for quiet, full, and breakdown sections.</li>'
+      + '<li>Add <b>Software Instrument → Bass</b>. Open Piano Roll and draw the printed roots. If using Drummer, set Follow to the bass after the part exists.</li>'
+      + '<li>iPhone/iPad: use <b>Touch Instrument → Smart Guitar</b> and record the named chord strips. Mac: use a Software Instrument guitar and draw the printed power stacks in Piano Roll.</li>'
+      + '<li>Select each performance and apply 1/16 Quantize. Shorten verse guitar notes; leave chorus notes more open. Copy repeated sections instead of replaying them.</li>'
+      + '<li>Record a scratch vocal, fix section lengths, then mute that vocal before exporting the clean show backing track.</li>'
+      + '</ol></details>';
+
     return '<div class="recipe-wrap">'
       + '<div class="recipe-hero"><div><span class="recipe-status">' + esc(r.status) + '</span><h3>Your build recipe</h3><p>' + esc(r.concept) + '</p></div>'
       + '<div class="recipe-facts"><span><small>KEY</small>' + esc(r.key) + '</span><span><small>PROJECT</small>' + esc(r.bpm) + ' BPM</span><span><small>FEEL</small>' + esc(r.feel) + '</span></div></div>'
@@ -215,29 +282,14 @@
       + '<div><span class="track-icon">GT</span><h4>Virtual guitar</h4><p>' + esc(r.guitar) + '</p></div>'
       + '<div><span class="track-icon">+</span><h4>Optional texture</h4><p>' + esc(r.extra) + '</p></div>'
       + '</div><div class="vocal-hole"><strong>Your live-vocal space:</strong> ' + esc(r.vocalSpace) + '</div></details>'
-      + '<details class="recipe-detail"><summary>3 · Click-by-click in BandLab</summary><ol class="click-list">'
-      + '<li><b>Create → New Project.</b> Click the tempo at the top and type <b>' + esc(r.bpm) + '</b>. Set 4/4, turn on metronome and count-in.</li>'
-      + '<li><b>Add Track → Virtual Instrument → drum kit.</b> Create a one-bar MIDI region, open its piano roll, set Snap/Quantize to 1/16.</li>'
-      + '<li>Open this app’s <b>' + esc((D.drumPatterns.find(function (p) { return p.id === r.drumPreset; }) || {}).name || "punk") + '</b> preset beside BandLab. Copy kick to C1, snare to D1, closed hats to F#1, open hats to A#1. Loop the bar.</li>'
-      + '<li><b>Add Track → Virtual Instrument → electric bass.</b> Draw the low note sequence printed in Bass above. Use one long note per chord first.</li>'
-      + '<li><b>Add Track → Virtual Instrument → guitar.</b> Draw every supplied power stack. Duplicate it into 8th-note blocks only after the chord changes work under your voice.</li>'
-      + '<li>Duplicate regions across the section map, remove parts where the energy note says to drop, then record a scratch vocal and adjust boundaries.</li>'
-      + '</ol></details>'
-      + '<details class="recipe-detail"><summary>4 · Click-by-click in GarageBand</summary><ol class="click-list">'
-      + '<li><b>New Project → Empty Project.</b> Set tempo to <b>' + esc(r.bpm) + '</b>, key to <b>' + esc(r.key) + '</b>, 4/4, count-in on.</li>'
-      + '<li>Add a <b>Drummer</b> track and choose the hardest Rock player available, or add a Software Instrument drum kit for exact control. Make separate regions for quiet, full, and breakdown sections.</li>'
-      + '<li>Add <b>Software Instrument → Bass</b>. Open Piano Roll and draw the printed roots. If using Drummer, set Follow to the bass after the part exists.</li>'
-      + '<li>iPhone/iPad: use <b>Touch Instrument → Smart Guitar</b> and record the named chord strips. Mac: use a Software Instrument guitar and draw the printed power stacks in Piano Roll.</li>'
-      + '<li>Select each performance and apply 1/16 Quantize. Shorten verse guitar notes; leave chorus notes more open. Copy repeated sections instead of replaying them.</li>'
-      + '<li>Record a scratch vocal, fix section lengths, then mute that vocal before exporting the clean show backing track.</li>'
-      + '</ol></details>'
+      + clickSteps
       + '<div class="recipe-disclaimer">Arrangement recipe, not a note-for-note transcription. No lyrics or original audio are included; verify the map against the exact recording you are covering.</div>'
       + '</div>';
   }
 
   function renderSongs() {
     var songs = loadSongs();
-    var html = pageHead("Your Songs", "Your five punk builds are loaded", "Open one board for the supplied key, BPM, section map, bass notes, virtual-guitar stacks, and exact BandLab/GarageBand order. No instrument performance is assumed.")
+    var html = pageHead("Your Songs", "Your five punk builds are loaded", "Open one board for the supplied key, BPM, section map, bass notes, virtual-guitar stacks, and the exact " + dawName() + " click order. No instrument performance is assumed.")
       + '<div class="card no-play-card"><div><h3>Read the recipe like a DJ timeline</h3><p><b>Bars</b> are four counts. <b>Chord dots</b> move left to right in time. <b>×2</b> means duplicate. Build one loop, sing over it, then copy it — that is the entire operating system.</p></div><button class="btn" id="restore-ep">Restore missing EP boards</button></div>'
       + '<details class="add-song"><summary>+ Add another song later</summary><div class="card"><div class="row">'
       + '<div class="field"><label>Song title</label><input type="text" id="ns-title" placeholder="e.g. Dreams"></div>'
@@ -847,9 +899,11 @@
 
   /* ================= Cheat Sheets ================= */
   function renderCheats() {
-    var html = pageHead("Cheat Sheets", "Print & keep by the rig", "Condensed references for the studio and the road. Hit print for a clean copy.")
+    var daw = loadDaw();
+    var html = pageHead("Cheat Sheets", "Print & keep by the rig", "Condensed references for the studio and the road, matched to " + dawName() + ". Hit print for a clean copy.")
       + '<div class="print-bar"><button class="btn primary" onclick="window.print()">⎙ Print all</button></div>';
     D.cheatSheets.forEach(function (s) {
+      if (s.tool && s.tool !== "both" && s.tool !== daw) return;
       html += '<div class="card sheet"><h3>' + esc(s.title) + "</h3><ul class='tips' style='margin:0;background:transparent;padding:0 0 0 4px'>"
         + s.body.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + "</ul></div>";
     });
@@ -938,4 +992,5 @@
 
   if (!location.hash) location.hash = "#/dashboard";
   navigate();
+  window.__STEMLESS_BOOTED = true;
 })();

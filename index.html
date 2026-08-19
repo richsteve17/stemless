@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="assets/styles.css" />
 </head>
 <body>
+  <div id="load-error" class="load-error" style="display:none;padding:16px 22px;background:#3a1d16;color:#ffd9d4;border-bottom:2px solid #ff8a80;font:14px/1.55 -apple-system,'Segoe UI',Roboto,Arial,sans-serif">
+    <strong>CSS/JS failed to load — extract the zip first.</strong>
+    <span>If you opened this page straight from the downloaded zip, close it, right-click the zip → <b>Extract All</b>, then open <code>index.html</code> from the extracted folder (or double-click <code>start.command</code> on Mac / <code>start.bat</code> on Windows).</span>
+  </div>
   <div class="shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
@@ -15,6 +19,12 @@
           <strong>STEMLESS</strong>
           <span>Backing Track Studio</span>
         </div>
+      </div>
+
+      <div class="daw-locked garageband" title="Pick your studio on Start Here">
+        <span class="dot"></span>
+        <span class="daw-locked-label">Studio: <strong id="sideDaw">GarageBand</strong></span>
+        <a href="#/dashboard">change</a>
       </div>
 
       <nav class="nav" id="nav">
@@ -40,5 +50,15 @@
 
   <script src="assets/data.js"></script>
   <script src="assets/app.js"></script>
+  <script>
+    /* If the app scripts 404 (e.g. index.html opened from inside an un-extracted
+       zip), tell the user exactly how to fix it instead of showing a blank page. */
+    window.addEventListener("load", function () {
+      if (!window.STUDIO || !window.__STEMLESS_BOOTED) {
+        var b = document.getElementById("load-error");
+        if (b) b.style.display = "block";
+      }
+    });
+  </script>
 </body>
 </html>

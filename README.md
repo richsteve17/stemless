@@ -52,12 +52,27 @@ adjust section boundaries to their phrasing before final tracking.
   DAW workflows, mix/export references, and printable decision sheets.
 - **Licensing** — a short paperwork reference only; progress is stored in the browser.
 
+## Pick your studio
+
+On first open, the **Start Here** page asks which DAW you build in:
+
+- **HP / Windows → BandLab** (free, bandlab.com → Create → Mix Editor)
+- **Mac / iPhone → GarageBand**
+
+Lessons, recipe click-by-click steps, and cheat sheets follow the pick. It is stored
+in `localStorage` (`stemless.daw`) and can be changed any time; the sidebar shows the
+locked program.
+
 ## Run it
+
+**From a GitHub zip:** Code → Download ZIP → **Extract All** first, then double-click
+`start.command` (Mac) or `start.bat` (Windows). Opening `index.html` straight from
+inside the zip will not load the app.
 
 ```bash
 python3 server.py          # http://localhost:8000
 ```
 
 Or use any static file server pointed at this directory. There is no build step and
-no dependency. Song boards, checklist state, and lesson progress are stored in
-browser `localStorage`.
+no dependency. Song boards, checklist state, lesson progress, and the DAW pick are
+stored in browser `localStorage`.
