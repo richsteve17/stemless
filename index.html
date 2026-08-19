@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stemless — Backing Track Studio</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">⌁</span>
+        <div class="brand-text">
+          <strong>STEMLESS</strong>
+          <span>Backing Track Studio</span>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#/dashboard" data-route="dashboard"><span class="nav-ico">◉</span>Dashboard</a>
+        <a href="#/method" data-route="method"><span class="nav-ico">▤</span>The Method</a>
+        <a href="#/songs" data-route="songs"><span class="nav-ico">♪</span>Your Songs</a>
+        <a href="#/tools" data-route="tools"><span class="nav-ico">⌘</span>Tools</a>
+        <a href="#/cheats" data-route="cheats"><span class="nav-ico">▦</span>Cheat Sheets</a>
+        <a href="#/licensing" data-route="licensing"><span class="nav-ico">§</span>Licensing</a>
+      </nav>
+
+      <div class="sidebar-foot">
+        <div class="foot-progress">
+          <div class="foot-progress-label"><span>Method progress</span><strong id="sidePct">0%</strong></div>
+          <div class="meter"><div class="meter-fill" id="sideMeter"></div></div>
+        </div>
+        <p class="foot-note">DIY backing tracks = mechanical only.<br/>No master-use. You own the recording.</p>
+      </div>
+    </aside>
+
+    <main class="main" id="app"></main>
+  </div>
+
+  <script src="assets/data.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
