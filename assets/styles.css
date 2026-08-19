@@ -107,6 +107,50 @@ body {
 .badge.neutral { color: var(--muted); background: var(--panel-2); }
 .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
 
+/* ---------- DAW picker ---------- */
+.daw-locked {
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 8px 16px; padding: 8px 11px;
+  border: 1px solid var(--line); border-radius: 9px; background: var(--panel-2);
+  font-size: 12px; color: var(--muted);
+}
+.daw-locked .dot { flex: 0 0 auto; background: var(--faint); }
+.daw-locked-label strong { color: var(--text); }
+.daw-locked.bandlab .dot { background: var(--bandlab); }
+.daw-locked.bandlab strong { color: var(--bandlab); }
+.daw-locked.garageband .dot { background: var(--garageband); }
+.daw-locked.garageband strong { color: var(--garageband); }
+.daw-locked a { margin-left: auto; font-size: 11px; font-weight: 700; color: var(--faint); text-decoration: none; letter-spacing: .04em; }
+.daw-locked a:hover { color: var(--accent); }
+
+.daw-picker { border-color: rgba(245,165,36,.45); }
+.daw-picker-head h2 { margin: 0 0 8px; font-size: 21px; }
+.daw-picker-head p { margin: 0; color: var(--muted); max-width: 72ch; }
+.daw-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.daw-opt {
+  display: flex; flex-direction: column; gap: 4px; text-align: left;
+  padding: 16px 18px; border-radius: 12px; cursor: pointer;
+  background: var(--panel-2); border: 1.5px solid var(--line-2); color: var(--text);
+  transition: background .12s, border-color .12s;
+}
+.daw-opt b { font-size: 16px; }
+.daw-opt span { color: var(--muted); font-size: 12.5px; line-height: 1.4; }
+.daw-opt:hover { background: #212836; border-color: #3c465a; }
+.daw-opt.bandlab.selected { border-color: var(--bandlab); background: var(--bandlab-soft); }
+.daw-opt.bandlab.selected b { color: var(--bandlab); }
+.daw-opt.bandlab.selected b::after { content: " · locked ✓"; font-size: 11px; letter-spacing: .05em; }
+.daw-opt.garageband.selected { border-color: var(--garageband); background: var(--garageband-soft); }
+.daw-opt.garageband.selected b { color: var(--garageband); }
+.daw-opt.garageband.selected b::after { content: " · locked ✓"; font-size: 11px; letter-spacing: .05em; }
+
+/* ---------- Asset load failure banner ---------- */
+.load-error {
+  padding: 16px 22px; background: #3a1d16; color: #ffd9d4;
+  border-bottom: 2px solid #ff8a80; font-size: 14px; line-height: 1.55;
+}
+.load-error strong { display: block; color: #ff8a80; font-size: 15px; margin-bottom: 4px; }
+.load-error code { font-family: var(--mono); background: rgba(0,0,0,.32); padding: 1px 6px; border-radius: 5px; }
+
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
@@ -375,6 +419,8 @@ table.ref tr:last-child td { border-bottom: none; }
   .kv { grid-template-columns: 1fr; }
   .start-card, .no-play-card, .recipe-hero { align-items: stretch; flex-direction: column; }
   .start-card .btn, .no-play-card .btn { align-self: flex-start; }
+  .daw-locked { margin: 0; }
+  .daw-options { grid-template-columns: 1fr; }
   .mini-path, .build-steps, .track-plan { grid-template-columns: 1fr; }
   .recipe-facts { justify-content: flex-start; }
   .recipe-section { grid-template-columns: 26px 1fr; }
